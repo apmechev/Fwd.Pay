@@ -4,46 +4,110 @@ import time
 import requests
 import pdb
 
-# Note: in order to use this example, you need to have at least one account
-# that you can send money from (i.e. be the owner).
-# All properties are now kept in one central place
-
 from props.default import *
-
 
 # You probably don't need to change those
 import lib.obp
-obp = lib.obp
 
-obp.setBaseUrl(BASE_URL)
-obp.setBaseUrl(BASE_URL)
-obp.setApiVersion(API_VERSION)
 
-# Login and set authorized token
-obp.login(USERNAME, PASSWORD, CONSUMER_KEY)
+class FWDpay_client(object):
+    """Parent class for all our clients. It defines 
+    all the methods an API needs to support"""
+    def __init__(self):
+        raise(NotImplementedError)
 
-user = obp.getCurrentUser()
-print("current user data:\n{0}".format(user))
-user_id = user['user_id']
-print("current user id: {0}".format(user))
+    def authorize(self):
+        raise(NotImplementedError)
 
-our_bank = OUR_BANK  # banks[0]['id']
-print("our bank: {0}".format(our_bank))
+    def check_balance(self, bank_id=None, account_id=None):
+        raise(NotImplementedError)
 
-# Get accounts for a specific bank
-print(" --- Private accounts")
+    def block_balance(self, amount, bank_id=None, account_id=None):
+        raise(NotImplementedError)
 
-accounts = obp.getPrivateAccounts(our_bank)
-
-for a in accounts:
-        our_account = accounts[0]['id']
+    def transfer(self, amount, rec_bank_id, rec_acct_id,  bank_id=None, account_id=None):
+        raise(NotImplementedError)
 
 
 
-def get_balance(our_bank=our_bank, our_account=our_account):
-    account_data = obp.getAccount(our_bank, our_account)
-    amount = account_data['balance']['amount']
-    currency = account_data['balance']['currency']
-    return {'amount':amount, 'currency':currency}
+class OBPClient(FWDpay_client):
+    """ Interface using the OBP API
+    """
 
-print(get_balance())
+    def __init__(self, bank_id, account_id, verbose=False):
+        self.obp = lib.obp
+        if not verbose:
+            self.obp.LOGGING = False
+        self.obp.setBaseUrl(BASE_URL)
+        self.obp.setBaseUrl(BASE_URL)
+        self.obp.setApiVersion(API_VERSION)
+	self.bank_id = bank_id
+        self.authorize(USERNAME, PASSWORD)
+        self._verify_bank_id(bank_id)
+	self.account_id = account_id
+        self._verify_account_id(account_id)
+        self.verbose = verbose
+
+    def _verify_bank_id(self, bank_id):
+        if not bank_id in [i['id'] for i in self.obp.getBanks()]:
+            raise(RuntimeError("Bank not found in banks list"))
+
+    def _verify_account_id(self, account_id):
+        accounts = self.obp.getPrivateAccounts(self.bank_id)
+        if account_id not in [i['id'] for i in accounts]:
+            raise(RuntimeError("Account not found in accounts list"))
+
+
+    def authorize(self,username,password):
+        """ Username and Password Authorization for the OBP api
+        """ #TODO: Use decorator to change authorization on the fly
+        self.obp.login(username,password, CONSUMER_KEY)
+        self.user = self.obp.getCurrentUser()
+        
+    def check_balance(self, bank_id=None, account_id=None):
+        """Check if the account has sufficient balance for the transaction
+        """
+	bank_id = bank_id or self.bank_id
+	account_id = account_id or self.account_id
+    	account_data = self.obp.getAccount(bank_id, account_id)
+	amount = account_data['balance']['amount']
+    	currency = account_data['balance']['currency']
+        return {'account_id':account_id,'amount':amount, 'currency':currency}
+
+    def send_payment(self, amount, rec_bank_id, rec_acct_id ):
+        amount = str(amount)
+        self._verify_account_id(rec_acct_id)
+        self._verify_bank_id(rec_bank_id)
+        account_data = self.obp.getAccount(rec_bank_id, rec_acct_id)
+        target_currency = account_data['balance']['currency']
+        if target_currency != OUR_CURRENCY:
+            raise(ValueError("Unequal Currencies "+ OUR_CURRENCY + "!=" + target_currency ))
+        self.obp.setPaymentDetails(OUR_CURRENCY, amount) 
+        initiate_response = self.obp.createTransactionRequestV210(from_bank_id=self.bank_id,
+                                    from_account_id=self.account_id,
+                                    transaction_request_type="SANDBOX_TAN",
+                                    to_bank_id=rec_bank_id,
+                                    to_account_id=rec_acct_id,
+                                    to_counterparty_id="",  # used for SEPA
+                                    to_counterparty_iban="")  # used for COUNTERPARTY
+        if self.verbose:
+            self.obp.printMessageNoChallenge(initiate_response)
+
+
+CONVENIENCE_TAX = 0.09
+PLATFORM_FEE = 0.225
+
+def calculate_convenience_amount(bill_amount):
+    return CONVENIENCE_TAX*bill_amount
+
+def platform_fee(bill_amount, runner_fee):
+    convenience_amount = calculate_convenience_amount(bill_amount) * PLATFORM_FEE
+    runner_amount = runner_fee * PLATFORM_FEE
+    return (convenience_amount + runner_amount)
+
+def runner_takeaway(bill_amount, runner_fee):
+    convenience_amount = calculate_convenience_amount(bill_amount) * (1 - PLATFORM_FEE)
+    runner_amount = runner_fee * (1 - PLATFORM_FEE)
+    return (convenience_amount + runner_amount)
+
+
