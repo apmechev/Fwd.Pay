@@ -287,7 +287,6 @@ def getCounterparties(bank, account):
 def printMessageNoChallenge(response):
     if "error" in response:
         print("The result is: {0}".format(response))
-        # sys.exit("Got an error: " + str(response))
     print("There was no challenge, transaction was created immediately:")
     print("The response is : {0}".format(response))
     print("Transaction status: {0}".format(response['status']))
@@ -297,7 +296,6 @@ def printMessageNoChallenge(response):
 def printMessageWithChallenge(response):
     if "error" in response:
         print("The result is: {0}".format(response))
-        # sys.exit("Got an error: " + str(response))
     print("There was a challenge, transaction was interrupted, the transaction_request is 'INITIATED' and new Transaction id is null:")
     print("The response is: {0}".format(response))
     print("Transaction status: {0}".format(response['status']))
@@ -307,7 +305,6 @@ def printMessageWithChallenge(response):
 def printMessageAfterAnswerChallenge(response):
     if "error" in response:
         print("The result is: {0}".format(response))
-        # sys.exit("Got an error: " + str(response))
     print("Transaction is done , and the transaction_request is 'COMPLETED' and new Transaction id is created: :")
     print("The result is: {0}".format(response))
     print("Transaction status: {0}".format(response['status']))
