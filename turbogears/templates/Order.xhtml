@@ -1,0 +1,16 @@
+<html py:extends="master.xhtml" py:strip="True">
+    <head py:block="head" py:strip="True">
+        <title py:block="master_title">Order Status</title>
+    </head>
+    <body py:block="body" py:strip="True">
+
+    <h1>
+    Status of Order number ${order_id} is ${status}.   </h1>
+    The Order description is:  ${description}
+    <br/>
+    Total cost is EUR${total}
+    <br/>
+    Runner is ${order_runner.name}
+    </body>
+</html>
+
