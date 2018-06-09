@@ -106,7 +106,7 @@ class RootController(BaseController):
     @validate(
         form=add_order_form,
         error_handler=index)
-    def add_order( self, description, total, **named):
+    def add_order( self, description, total):
         """Create a new order record"""
 	runner_id = get_random_runner()
         new = Order(
@@ -155,22 +155,6 @@ class RootController(BaseController):
     def editor_user_only(self, **kw):
         """Illustrate how a page exclusive for the editor works."""
         return dict(page='editor stuff')
-
-    @expose('example.templates.login')
-    def login(self, came_from=lurl('/'), failure=None, login=''):
-        """Start the user login."""
-        if failure is not None:
-            if failure == 'user-not-found':
-                flash(_('User not found'), 'error')
-            elif failure == 'invalid-password':
-                flash(_('Invalid Password'), 'error')
-
-        login_counter = request.environ.get('repoze.who.logins', 0)
-        if failure is None and login_counter > 0:
-            flash(_('Wrong credentials'), 'warning')
-
-        return dict(page='login', login_counter=str(login_counter),
-                    came_from=came_from, login=login)
 
     @expose()
     def post_login(self, came_from=lurl('/')):
