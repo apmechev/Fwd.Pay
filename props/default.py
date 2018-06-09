@@ -1,10 +1,6 @@
-
+from props.login import *
 
 OUR_BANK     = 'bb.01.nl.nl'
-
-USERNAME     = 'apmechev'
-PASSWORD     = 'cRq#wqp4ByN6Z4^7'
-CONSUMER_KEY = '3npjw02pmtm5u4aw3fqojk2zijlmcy3h5tra4f45'
 
 # API server URL
 BASE_URL  = "https://beyondbanking.openbankproject.com"#/my/logins/direct" ##"https://apisandbox.openbankproject.com"
