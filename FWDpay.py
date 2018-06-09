@@ -41,10 +41,10 @@ class OBPClient(FWDpay_client):
         self.obp.setBaseUrl(BASE_URL)
         self.obp.setBaseUrl(BASE_URL)
         self.obp.setApiVersion(API_VERSION)
-	self.bank_id = bank_id
+        self.bank_id = bank_id
         self.authorize(USERNAME, PASSWORD)
         self._verify_bank_id(bank_id)
-	self.account_id = account_id
+        self.account_id = account_id
         self._verify_account_id(account_id)
         self.verbose = verbose
 
@@ -67,11 +67,11 @@ class OBPClient(FWDpay_client):
     def check_balance(self, bank_id=None, account_id=None):
         """Check if the account has sufficient balance for the transaction
         """
-	bank_id = bank_id or self.bank_id
-	account_id = account_id or self.account_id
-    	account_data = self.obp.getAccount(bank_id, account_id)
-	amount = account_data['balance']['amount']
-    	currency = account_data['balance']['currency']
+        bank_id = bank_id or self.bank_id
+        account_id = account_id or self.account_id
+        account_data = self.obp.getAccount(bank_id, account_id)
+        amount = account_data['balance']['amount']
+        currency = account_data['balance']['currency']
         return {'account_id':account_id,'amount':amount, 'currency':currency}
 
     def send_payment(self, amount, rec_bank_id, rec_acct_id ):
@@ -97,13 +97,14 @@ class OBPClient(FWDpay_client):
 CONVENIENCE_TAX = 0.09
 PLATFORM_FEE = 0.225
 
+#TODO: Close token after transfer
 
 def calculate_transfer_amounts(bill_amount, runner_fee):
     platform_fee = platform_fee(bill_amount, runner_fee)
     runner_takeaway = runner_takeaway(bill_amount, runner_fee)
     return {'platform_fee':platform_fee, 
             'runner_takeaway':runner_takeaway, 
-            'total_bill':bill_amount)
+            'total_bill':bill_amount}
 
 def calculate_convenience_amount(bill_amount): 
     conv_amount = 2
