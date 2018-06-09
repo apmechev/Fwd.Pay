@@ -1,2 +1,2 @@
 exclude:
-        - lib/obp.py
+        - /lib/*
