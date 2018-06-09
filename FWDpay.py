@@ -60,7 +60,7 @@ class OBPClient(FWDpay_client):
 
     def authorize(self,username,password):
         """ Username and Password Authorization for the OBP api
-        """ #TODO: Use decorator to change authorization on the fly
+        """ 
         self.obp.login(username,password, CONSUMER_KEY)
         self.user = self.obp.getCurrentUser()
         
@@ -97,8 +97,19 @@ class OBPClient(FWDpay_client):
 CONVENIENCE_TAX = 0.09
 PLATFORM_FEE = 0.225
 
-def calculate_convenience_amount(bill_amount):
-    return CONVENIENCE_TAX*bill_amount
+
+def calculate_transfer_amounts(bill_amount, runner_fee):
+    platform_fee = platform_fee(bill_amount, runner_fee)
+    runner_takeaway = runner_takeaway(bill_amount, runner_fee)
+    return {'platform_fee':platform_fee, 
+            'runner_takeaway':runner_takeaway, 
+            'total_bill':bill_amount)
+
+def calculate_convenience_amount(bill_amount): 
+    conv_amount = 2
+    if CONVENIENCE_TAX*bill_amount > 2:
+        conv_amount = CONVENIENCE_TAX*bill_amount
+    return conv_amount 
 
 def platform_fee(bill_amount, runner_fee):
     convenience_amount = calculate_convenience_amount(bill_amount) * PLATFORM_FEE
@@ -109,5 +120,7 @@ def runner_takeaway(bill_amount, runner_fee):
     convenience_amount = calculate_convenience_amount(bill_amount) * (1 - PLATFORM_FEE)
     runner_amount = runner_fee * (1 - PLATFORM_FEE)
     return (convenience_amount + runner_amount)
+
+
 
 
