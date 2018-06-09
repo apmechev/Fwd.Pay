@@ -25,7 +25,7 @@ class FWDpay_client(object):
     def block_balance(self, amount, bank_id=None, account_id=None):
         raise(NotImplementedError)
 
-    def transfer(self, amount, rec_bank_id, rec_acct_id,  bank_id=None, account_id=None):
+    def transfer(self, amount, rec_bank_id, rec_acct_id ):
         raise(NotImplementedError)
 
 
