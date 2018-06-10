@@ -1,3 +1,15 @@
+"""
+.. module:: FWDpay
+   :platform: Unix
+   :synopsis: A Module that integrates with Payment APIs and allows to calculate fees for BunRun
+
+.. moduleauthor:: Alexandar Mechev <apmechev@gmail.com>
+
+
+"""
+
+
+
 from __future__ import print_function    # (at top of module)
 import sys
 import time
