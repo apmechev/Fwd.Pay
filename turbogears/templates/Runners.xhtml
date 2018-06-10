@@ -37,36 +37,19 @@
   <a href="orders" class="w3-button w3-bar-item">Orders</a>
   <a href="#contact" class="w3-button w3-bar-item">Contact</a>
 </nav>
-      <div class="row">
-        <div class="col-md-8">
-          <div class="jumbotron">
-            <img src="/img/header.png" height="42" ></img>
-            <h1>Welcome to FWD.Pay</h1>
-            <p>Enabling Remote Payments </p>
-            <p>
-            </p>
-          </div>
-        </div>
-
-
-      </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <h2>New Order</h2>
-              ${tmpl_context.add_order_form( action='add_order') }
-
+	Available Order Runners
+       <table id='runners'>
+        <thead>
+            <tr><th>Runner Name </th><th>Runner Account ID</th><th>Runner Available?</th></tr>
+        </thead>
+        <tbody>
+            <tr py:for="Runner in runners">
+                <th class="Runner-name">${Runner.name}</th>
+                <td class="Runner-account">${Runner.acct_id}</td>
+                <td class="Runner-avail">${Runner.available}</td>
+            </tr>
+        </tbody>
+    </table>
 
       <em class="pull-right small"> Thank you for choosing FWD.pay.</em>
     </body>
