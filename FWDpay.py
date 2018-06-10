@@ -21,6 +21,11 @@ from props.default import *
 # You probably don't need to change those
 import lib.obp
 
+class Bank_Account(object):
+    def __init__(self, bank_id, account_id)
+        self.bank_id = bank_id
+        self.account_id = account_id
+
 
 class FWDpay_client(object):
     """Parent class for all our clients. It defines 
@@ -46,17 +51,17 @@ class OBPClient(FWDpay_client):
     """ Interface using the OBP API
     """
 
-    def __init__(self, bank_id, account_id, verbose=False):
+    def __init__(self, bank_account=Bank_Account(), verbose=False):
         self.obp = lib.obp
         if not verbose:
             self.obp.LOGGING = False
         self.obp.setBaseUrl(BASE_URL)
         self.obp.setBaseUrl(BASE_URL)
         self.obp.setApiVersion(API_VERSION)
-        self.bank_id = bank_id
+        self.bank_account.bank_id = bank_id
         self.authorize(USERNAME, PASSWORD)
         self._verify_bank_id(bank_id)
-        self.account_id = account_id
+        self.bank_account.account_id = account_id
         self._verify_account_id(account_id)
         self.verbose = verbose
 
@@ -76,7 +81,7 @@ class OBPClient(FWDpay_client):
         self.obp.login(username,password, CONSUMER_KEY)
         self.user = self.obp.getCurrentUser()
         
-    def check_balance(self, bank_id=None, account_id=None):
+    def check_balance(self, bank_account):
         """Check if the account has sufficient balance for the transaction
         """
         bank_id = bank_id or self.bank_id
@@ -86,11 +91,13 @@ class OBPClient(FWDpay_client):
         currency = account_data['balance']['currency']
         return {'account_id':account_id,'amount':amount, 'currency':currency}
 
-    def send_payment(self, amount, rec_bank_id, rec_acct_id ):
+    def send_payment(self, amount, rec_bank_account ):
         amount = str(amount)
         self._verify_account_id(rec_acct_id)
         self._verify_bank_id(rec_bank_id)
-        account_data = self.obp.getAccount(rec_bank_id, rec_acct_id)
+        account_data = self.obp.getAccount(
+                rec_bank_account.bank_id,
+                rec_bank_account.acct_id)
         target_currency = account_data['balance']['currency']
         if target_currency != OUR_CURRENCY:
             raise(ValueError("Unequal Currencies "+ OUR_CURRENCY + "!=" + target_currency ))
