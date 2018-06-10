@@ -22,7 +22,7 @@ from props.default import *
 import lib.obp
 
 class Bank_Account(object):
-    def __init__(self, bank_id, account_id)
+    def __init__(self, bank_id, account_id):
         self.bank_id = bank_id
         self.account_id = account_id
 
@@ -36,13 +36,13 @@ class FWDpay_client(object):
     def authorize(self):
         raise(NotImplementedError)
 
-    def check_balance(self, bank_id=None, account_id=None):
+    def check_balance(self, bank_account):
         raise(NotImplementedError)
 
-    def block_balance(self, amount, bank_id=None, account_id=None):
+    def block_balance(self, amount, bank_account):
         raise(NotImplementedError)
 
-    def transfer(self, amount, rec_bank_id, rec_acct_id ):
+    def transfer(self, amount, bank_account ):
         raise(NotImplementedError)
 
 
