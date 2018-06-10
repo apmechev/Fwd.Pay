@@ -1,8 +1,16 @@
 <html py:extends="master.xhtml" py:strip="True">
+<link rel="stylesheet" type="text/css" media="screen" href="${tg.url('/css/w3.css')}" />
+
     <head py:block="head" py:strip="True">
         <title py:block="master_title">Order Status</title>
     </head>
     <body py:block="body" py:strip="True">
+<nav class="w3-bar w3-black">
+  <a href="/FWDpay" class="w3-button w3-bar-item">Home</a>
+  <a href="Runners" class="w3-button w3-bar-item">Runners</a>
+  <a href="/orders" class="w3-button w3-bar-item">Orders</a>
+  <a href="#contact" class="w3-button w3-bar-item">Contact</a>
+</nav>
 
     <h1>
     Status of Order number ${order_id} is ${status}.   </h1>
