@@ -100,10 +100,10 @@ PLATFORM_FEE = 0.225
 #TODO: Close token after transfer
 
 def calculate_transfer_amounts(bill_amount, runner_fee):
-    platform_fee = platform_fee(bill_amount, runner_fee)
-    runner_takeaway = runner_takeaway(bill_amount, runner_fee)
-    return {'platform_fee':platform_fee, 
-            'runner_takeaway':runner_takeaway, 
+    platform_fee_sum = platform_fee(bill_amount, runner_fee)
+    runner_takeaway_sum = runner_takeaway(bill_amount, runner_fee)
+    return {'platform_fee':platform_fee_sum, 
+            'runner_takeaway':runner_takeaway_sum, 
             'total_bill':bill_amount}
 
 def calculate_convenience_amount(bill_amount): 
