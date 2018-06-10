@@ -51,18 +51,18 @@ class OBPClient(FWDpay_client):
     """ Interface using the OBP API
     """
 
-    def __init__(self, bank_account=Bank_Account(), verbose=False):
+    def __init__(self, bank_account=Bank_Account('bank_id','acct_id'), verbose=False):
         self.obp = lib.obp
         if not verbose:
             self.obp.LOGGING = False
         self.obp.setBaseUrl(BASE_URL)
         self.obp.setBaseUrl(BASE_URL)
         self.obp.setApiVersion(API_VERSION)
-        self.bank_account.bank_id = bank_id
+        self.bank_id = bank_account.bank_id
         self.authorize(USERNAME, PASSWORD)
-        self._verify_bank_id(bank_id)
-        self.bank_account.account_id = account_id
-        self._verify_account_id(account_id)
+        self._verify_bank_id(self.bank_id)
+        self.account_id = bank_account.account_id 
+        self._verify_account_id(self.account_id)
         self.verbose = verbose
 
     def _verify_bank_id(self, bank_id):
@@ -81,23 +81,23 @@ class OBPClient(FWDpay_client):
         self.obp.login(username,password, CONSUMER_KEY)
         self.user = self.obp.getCurrentUser()
         
-    def check_balance(self, bank_account):
+    def check_balance(self, bank_account=None):
         """Check if the account has sufficient balance for the transaction
         """
-        bank_id = bank_id or self.bank_id
-        account_id = account_id or self.account_id
-        account_data = self.obp.getAccount(bank_id, account_id)
+        bank_id = self.bank_id
+        account_id = self.account_id
+        account_data = self.obp.getAccount(self.bank_id, self.account_id)
         amount = account_data['balance']['amount']
         currency = account_data['balance']['currency']
         return {'account_id':account_id,'amount':amount, 'currency':currency}
 
     def send_payment(self, amount, rec_bank_account ):
         amount = str(amount)
-        self._verify_account_id(rec_acct_id)
-        self._verify_bank_id(rec_bank_id)
+        self._verify_account_id(rec_bank_account.account_id)
+        self._verify_bank_id(rec_bank_account.bank_id)
         account_data = self.obp.getAccount(
                 rec_bank_account.bank_id,
-                rec_bank_account.acct_id)
+                rec_bank_account.account_id)
         target_currency = account_data['balance']['currency']
         if target_currency != OUR_CURRENCY:
             raise(ValueError("Unequal Currencies "+ OUR_CURRENCY + "!=" + target_currency ))
@@ -105,8 +105,8 @@ class OBPClient(FWDpay_client):
         initiate_response = self.obp.createTransactionRequestV210(from_bank_id=self.bank_id,
                                     from_account_id=self.account_id,
                                     transaction_request_type="SANDBOX_TAN",
-                                    to_bank_id=rec_bank_id,
-                                    to_account_id=rec_acct_id,
+                                    to_bank_id=rec_bank_account.bank_id,
+                                    to_account_id=rec_bank_account.account_id,
                                     to_counterparty_id="",  # used for SEPA
                                     to_counterparty_iban="")  # used for COUNTERPARTY
         if self.verbose:
