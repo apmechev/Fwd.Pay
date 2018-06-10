@@ -1,3 +1,7 @@
+# Token and password
+props/login.py
+
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
