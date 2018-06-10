@@ -48,7 +48,8 @@ class OrderController(BaseController):
 
     @expose()
     def index(self):
-        redirect('orders/vieworder?_id=1')
+	last_order = DBSession.query(Order).count()
+        redirect('orders/vieworder?_id='+str(last_order))
 
     @expose('example.templates.Order')
     @validate({"_id" : validators.Int(max=DBSession.query(Order).count())  })
