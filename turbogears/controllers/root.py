@@ -62,10 +62,6 @@ class OrderController(BaseController):
         return dict(page='Order', order_id=_id, total="%.2f"%total, status=status,
                 description=description, order_runner=order_runner)
 
-    def create(self, title, text, order_id=1, **kw):
-        order_page = Page(title=tile, text=text, order_id=_id, tags=str(kw))
-        DBSession.add(order_page)
-
 
 class RootController(BaseController):
     """
