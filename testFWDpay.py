@@ -5,6 +5,7 @@ import unittest
 class TestOBPClient(unittest.TestCase):
     def test_bank_transfer(self):
         """Creates a bank transfer and checks if it has succeeded"""
+
         g = FWDpay.OBPClient('bb.01.nl.nl','User1')
         init_bal = g.check_balance()
         g.send_payment(10,g.bank_id, 'FWDPay')
@@ -14,6 +15,8 @@ class TestOBPClient(unittest.TestCase):
         init_rec = g.check_balance()
         g.send_payment(10,g.bank_id, 'User1')
         self.assertTrue(float(g.check_balance()['amount']) == float(init_rec['amount']) - 10)
+        g = FWDpay.OBPClient('bb.01.nl.nl','User1')
+        self.assertTrue(float(g.check_balance()['amount']) == float(init_bal['amount']))
 
 
     def test_bad_bank(self):
