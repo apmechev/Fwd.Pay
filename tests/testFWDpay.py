@@ -47,3 +47,10 @@ class TestFWDCalculations(unittest.TestCase):
         self.assertTrue(fees['platform_fee'] == total * FWDpay.CONVENIENCE_TAX * FWDpay.PLATFORM_FEE + runner_fee * FWDpay.PLATFORM_FEE)
         self.assertTrue(fees['runner_takeaway'] + fees['platform_fee'] == total * FWDpay.CONVENIENCE_TAX +runner_fee )
 
+    def test_convenience_amount(self):
+        bill = 1.99
+        self.assertTrue(FWDpay.calculate_convenience_amount(bill) == 2.00 )
+        bill = 2.01/ FWDpay.CONVENIENCE_TAX 
+        self.assertTrue(FWDpay.calculate_convenience_amount(bill) == bill * FWDpay.CONVENIENCE_TAX )
+
+
