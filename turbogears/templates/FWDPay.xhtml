@@ -1,6 +1,30 @@
 <html py:extends="master.xhtml" py:strip="True">
     <head py:block="head" py:strip="True">
         <title py:block="master_title">Welcome to FWD.Pay!</title>
+<style>
+#runners {
+    font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+#runners td, #runners th {
+    border: 1px solid #ddd;
+    padding: 4px;
+}
+
+#runners tr:nth-child(even){background-color: #f2f2f2;}
+
+#runners tr:hover {background-color: #ddd;}
+
+#runners th {
+    padding-top: 8x;
+    padding-bottom: 8x;
+    text-align: left;
+    background-color: #4CAF50;
+    color: white;
+}
+</style>
     </head>
 
     <body py:block="body" py:strip="True">
@@ -19,7 +43,7 @@
       </div>
 
 	Available Order Runners
-       <table class="runner-listing">
+       <table id='runners'>
         <thead>
             <tr><th>Runner Name </th><th>Runner Account ID</th><th>Runner Available?</th></tr>
         </thead>
